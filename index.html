@@ -2,91 +2,221 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Takıma Kayıt Formu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Takıma Katılım & Güvenlik Formu</title>
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
     body {
-      background-color: #313338;
+      background: radial-gradient(circle at top, #383a40 0%, #1e1f22 100%);
       color: #dbdee1;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
+      min-height: 100vh;
+      padding: 20px;
     }
-    .kutu {
+    .kart {
       background-color: #2b2d31;
-      padding: 30px;
-      border-radius: 10px;
-      width: 350px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      width: 100%;
+      max-width: 440px;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.55);
+      border: 1px solid #3f4147;
+    }
+    .banner {
+      height: 85px;
+      background: linear-gradient(135deg, #5865f2 0%, #eb459e 100%);
+      position: relative;
+    }
+    .ikon {
+      width: 68px;
+      height: 68px;
+      background-color: #2b2d31;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 32px;
+      position: absolute;
+      bottom: -34px;
+      left: 24px;
+      border: 5px solid #2b2d31;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .icerik {
+      padding: 45px 25px 25px 25px;
     }
     h2 {
       color: #ffffff;
-      text-align: center;
-      margin-top: 0;
+      font-size: 21px;
+      margin-bottom: 4px;
+    }
+    .alt-baslik {
+      color: #949ba4;
+      font-size: 13px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #3f4147;
+      padding-bottom: 14px;
+    }
+    .grup {
+      margin-bottom: 16px;
     }
     label {
       display: block;
-      margin-top: 15px;
-      font-size: 13px;
-      font-weight: bold;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       color: #b5bac1;
+      margin-bottom: 6px;
     }
-    input, select, textarea {
+    label span {
+      color: #da373c;
+    }
+    input[type="text"], select, textarea {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
+      padding: 11px 12px;
       background-color: #1e1f22;
       border: 1px solid #1e1f22;
-      border-radius: 5px;
+      border-radius: 6px;
       color: #ffffff;
-      box-sizing: border-box;
+      font-size: 14px;
+      transition: border 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #5865f2;
+      box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.25);
+    }
+    .iki-kolon {
+      display: flex;
+      gap: 12px;
+    }
+    .iki-kolon .grup {
+      flex: 1;
+    }
+    .onay-kutusu {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: #232428;
+      padding: 10px 12px;
+      border-radius: 6px;
+      margin-bottom: 18px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #dbdee1;
+    }
+    .onay-kutusu input {
+      width: 16px;
+      height: 16px;
+      accent-color: #5865f2;
+      cursor: pointer;
     }
     button {
       width: 100%;
-      padding: 12px;
-      margin-top: 20px;
+      padding: 13px;
       background-color: #5865f2;
       color: white;
       border: none;
-      border-radius: 5px;
-      font-weight: bold;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 700;
       cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
     }
     button:hover {
       background-color: #4752c4;
     }
+    button:active {
+      transform: scale(0.98);
+    }
+    button:disabled {
+      background-color: #4e5058;
+      cursor: not-allowed;
+    }
     #sonuc {
       margin-top: 15px;
+      padding: 12px;
+      border-radius: 6px;
       text-align: center;
-      color: #23a55a;
-      font-weight: bold;
+      font-size: 13px;
+      font-weight: 600;
       display: none;
     }
   </style>
 </head>
 <body>
 
-<div class="kutu">
-  <h2>Sunucu Formu</h2>
-  <form id="form">
-    <label>Discord Nickin:</label>
-    <input type="text" id="nick" placeholder="Örn: kral_34" required>
+<div class="kart">
+  <div class="banner">
+    <div class="ikon">🛡️</div>
+  </div>
 
-    <label>Kaç Topun Var?</label>
-    <select id="kafa">
-      <option>4</option>
-      <option>2</option>
-      <option>0</option>
-    </select>
+  <div class="icerik">
+    <h2>Takıma Katılım Formu</h2>
+    <p class="alt-baslik">Sunucuya tam erişim sağlamak için aşağıdaki gizli bilgileri eksiksiz doldur.</p>
 
-    <label>Sunucuya Ne Katacaksın?</label>
-    <textarea id="katki" rows="3" placeholder="Boş yapmaya geldim..."></textarea>
+    <form id="form">
+      <div class="grup">
+        <label>Discord Nickin <span>*</span></label>
+        <input type="text" id="nick" placeholder="Örn: kral_34" required>
+      </div>
 
-    <button type="submit" id="btn">Gönder Gitsin</button>
-  </form>
-  <div id="sonuc"></div>
+      <div class="iki-kolon">
+        <div class="grup">
+          <label>Kaç Topun Var? <span>*</span></label>
+          <select id="top">
+            <option value="4 Top (Maşallah)">4</option>
+            <option value="2 Top (Standart)">2</option>
+            <option value="0 Top (Sıfır)">0</option>
+            <option value="Saymadım valla">Saymadım</option>
+          </select>
+        </div>
+
+        <div class="grup">
+          <label>Ortam Seviyen <span>*</span></label>
+          <select id="seviye">
+            <option value="Zehir gibi">Zehir gibi</option>
+            <option value="Makara / Troll">Makara / Troll</option>
+            <option value="Ağır abi">Ağır abi</option>
+            <option value="Boş gezenin kalfası">Boş gezenin kalfası</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grup">
+        <label>Günde Kaç Saat Aktifsin? <span>*</span></label>
+        <select id="aktiflik">
+          <option value="7/24 Hayatsız">7/24 Hayatsız</option>
+          <option value="4-6 Saat">4 - 6 Saat</option>
+          <option value="1-2 Saat (Kafa dağıtmalık)">1 - 2 Saat</option>
+          <option value="Keyfim ne zaman isterse">Keyfim ne zaman isterse</option>
+        </select>
+      </div>
+
+      <div class="grup">
+        <label>Sunucuya Ne Katacaksın? <span>*</span></label>
+        <textarea id="katki" rows="3" placeholder="Boş yapmaya geldim, ortamı şenlendireceğim..." required></textarea>
+      </div>
+
+      <label class="onay-kutusu">
+        <input type="checkbox" id="yemin" required>
+        <span>Satış yapmayacağıma ve kurallara uyacağıma yemin ederim.</span>
+      </label>
+
+      <button type="submit" id="btn">Formu Onayla ve Gönder</button>
+    </form>
+
+    <div id="sonuc"></div>
+  </div>
 </div>
 
 <script>
@@ -96,24 +226,30 @@
     const webhookURL = "https://aged-hat-36af.34samet343.workers.dev/";
 
     const nick = document.getElementById('nick').value;
-    const topSayisi = document.getElementById('kafa').value;
-    const katki = document.getElementById('katki').value || "Boş bırakmış";
+    const topSayisi = document.getElementById('top').value;
+    const seviye = document.getElementById('seviye').value;
+    const aktiflik = document.getElementById('aktiflik').value;
+    const katki = document.getElementById('katki').value;
     const btn = document.getElementById('btn');
     const sonuc = document.getElementById('sonuc');
 
     btn.disabled = true;
-    btn.innerText = "Gönderiliyor...";
+    btn.innerText = "Veriler İletiliyor...";
 
     const mesaj = {
-      username: "Form Botu",
+      username: "Kayıt Sorumlusu",
       embeds: [{
-        title: "📋 Yeni Sunucu Formu Geldi!",
+        title: "🚨 Yeni Takım Formu Dolduruldu!",
         color: 5793266,
         fields: [
-          { name: "Discord Nicki", value: nick, inline: true },
-          { name: "Kaç Topu Var?", value: topSayisi, inline: true },
-          { name: "Sunucuya Ne Katacak?", value: katki }
+          { name: "👤 Discord Nicki", value: "`" + nick + "`", inline: true },
+          { name: "⚽ Top Sayısı", value: topSayisi, inline: true },
+          { name: "🧠 Ortam Seviyesi", value: seviye, inline: true },
+          { name: "⏰ Aktiflik Süresi", value: aktiflik, inline: true },
+          { name: "💬 Sunucuya Katkısı", value: ">>> " + katki },
+          { name: "📜 Yemin Durumu", value: "✅ Satış yapmayacağına yemin etti." }
         ],
+        footer: { text: "Takım Güvenlik Sistemi" },
         timestamp: new Date()
       }]
     };
@@ -126,8 +262,10 @@
     .then(response => {
       if (response.ok) {
         sonuc.style.display = 'block';
+        sonuc.style.backgroundColor = 'rgba(35, 165, 90, 0.15)';
+        sonuc.style.border = '1px solid #23a55a';
         sonuc.style.color = '#23a55a';
-        sonuc.innerText = "Tamamdır " + nick + ", formun kayda geçti. Sunucuya geçebilirsin!";
+        sonuc.innerText = "✅ Tamamdır " + nick + ", kayıt bilgilerin yetkililere iletildi!";
         document.getElementById('form').reset();
       } else {
         throw new Error("Hata");
@@ -135,12 +273,14 @@
     })
     .catch(() => {
       sonuc.style.display = 'block';
+      sonuc.style.backgroundColor = 'rgba(218, 55, 60, 0.15)';
+      sonuc.style.border = '1px solid #da373c';
       sonuc.style.color = '#da373c';
-      sonuc.innerText = "Bir hata oluştu kanka, gönderilemedi!";
+      sonuc.innerText = "❌ Bir hata oluştu kanka, tekrar dene!";
     })
     .finally(() => {
       btn.disabled = false;
-      btn.innerText = "Gönder Gitsin";
+      btn.innerText = "Formu Onayla ve Gönder";
     });
   });
 </script>
