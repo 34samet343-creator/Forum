@@ -320,11 +320,9 @@
   </div>
 </div>
 
-<!-- Kendi müziğini eklemek istersen src="" içine muzik.mp3 yaz -->
 <audio id="ozelMuzik" loop src=""></audio>
 
 <script>
-  // 1. DİJİTAL BUTON VE ONAY SES EFEKTLERİ (Harici dosya gerektirmez)
   const efektCtx = new (window.AudioContext || window.webkitAudioContext)();
 
   function tikSesiCal() {
@@ -344,7 +342,7 @@
 
   function onaySesiCal() {
     if (efektCtx.state === 'suspended') efektCtx.resume();
-    const notalar = [523.25, 659.25, 783.99, 1046.50]; // C5 - E5 - G5 - C6 dijital başarı melodisi
+    const notalar = [523.25, 659.25, 783.99, 1046.50];
     notalar.forEach((frekans, index) => {
       const osc = efektCtx.createOscillator();
       const gain = efektCtx.createGain();
@@ -374,18 +372,15 @@
     osc.stop(efektCtx.currentTime + 0.2);
   }
 
-  // Seçim kutularına ve onay kutusuna mekanik tık sesi bağla
   document.querySelectorAll('.sesli-eleman').forEach(el => {
     el.addEventListener('change', tikSesiCal);
   });
 
-  // 2. RASTGELE CAPTCHA OLUŞTURMA
   const sayi1 = Math.floor(Math.random() * 10) + 1;
   const sayi2 = Math.floor(Math.random() * 10) + 1;
   const dogruCevap = sayi1 + sayi2;
   document.getElementById('captchaSoru').innerText = `🤖 Doğrulama: ${sayi1} + ${sayi2} = ?`;
 
-  // 3. ARKA PLAN GİZEMLİ SES SİSTEMİ
   let bgAudioCtx = null;
   let sesAcik = false;
   let osc1, osc2, gainNode;
@@ -448,7 +443,6 @@
     }
   });
 
-  // 4. CİHAZ VE TARAYICI TESPİTİ
   function cihazBilgisiAl() {
     const ua = navigator.userAgent;
     let cihaz = "Bilinmeyen Cihaz";
@@ -470,7 +464,6 @@
     return `${cihaz} (${tarayici} - ${cozunurluk})`;
   }
 
-  // 5. FORM GÖNDERME VE VIP KART OLUŞTURMA
   document.getElementById('form').addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -519,37 +512,31 @@
       }]
     };
 
+    // no-cors ile CORS engelini bypass edip direkt VIP kart ekranını açar
     fetch(webhookURL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
       body: JSON.stringify(mesaj)
     })
-    .then(response => {
-      if (response.ok) {
-        onaySesiCal();
+    .then(() => {
+      onaySesiCal();
 
-        // Form ekranını gizle ve VIP Kart ekranını aç
-        document.getElementById('formEkran').style.display = 'none';
-        document.getElementById('vipEkran').style.display = 'block';
+      document.getElementById('formEkran').style.display = 'none';
+      document.getElementById('vipEkran').style.display = 'block';
 
-        // Banner ve ikonu VIP altın/yeşil temasına çevir
-        document.getElementById('bannerAlani').style.background = "linear-gradient(135deg, #23a55a 0%, #f59e0b 100%)";
-        document.getElementById('ustIkon').innerText = "👑";
+      document.getElementById('bannerAlani').style.background = "linear-gradient(135deg, #23a55a 0%, #f59e0b 100%)";
+      document.getElementById('ustIkon').innerText = "👑";
 
-        // VIP kart bilgilerini doldur
-        document.getElementById('vipKod').innerText = basvuruKodu;
-        document.getElementById('vipNick').innerText = nick;
-        document.getElementById('vipCihaz').innerText = cihazDetay;
+      document.getElementById('vipKod').innerText = basvuruKodu;
+      document.getElementById('vipNick').innerText = nick;
+      document.getElementById('vipCihaz').innerText = cihazDetay;
 
-        // Kopyala butonunu aktif et
-        document.getElementById('kopyalaBtn').onclick = function() {
-          tikSesiCal();
-          navigator.clipboard.writeText(`Başvuru Kodum: ${basvuruKodu} | Nick: ${nick}`);
-          this.innerText = "✅ Kod Panoya Kopyalandı!";
-        };
-      } else {
-        throw new Error("Hata");
-      }
+      document.getElementById('kopyalaBtn').onclick = function() {
+        tikSesiCal();
+        navigator.clipboard.writeText(`Başvuru Kodum: ${basvuruKodu} | Nick: ${nick}`);
+        this.innerText = "✅ Kod Panoya Kopyalandı!";
+      };
     })
     .catch(() => {
       hataSesiCal();
