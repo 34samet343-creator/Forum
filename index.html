@@ -5,11 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Takıma Katılım & Güvenlik Formu</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background: radial-gradient(circle at top, #383a40 0%, #1e1f22 100%);
       color: #dbdee1;
@@ -34,6 +30,21 @@
       background: linear-gradient(135deg, #5865f2 0%, #eb459e 100%);
       position: relative;
     }
+    .muzik-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      width: auto;
+      margin: 0;
+    }
+    .muzik-btn:hover { background: rgba(0, 0, 0, 0.7); }
     .ikon {
       width: 68px;
       height: 68px;
@@ -49,14 +60,8 @@
       border: 5px solid #2b2d31;
       box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
-    .icerik {
-      padding: 45px 25px 25px 25px;
-    }
-    h2 {
-      color: #ffffff;
-      font-size: 21px;
-      margin-bottom: 4px;
-    }
+    .icerik { padding: 45px 25px 25px 25px; }
+    h2 { color: #ffffff; font-size: 21px; margin-bottom: 4px; }
     .alt-baslik {
       color: #949ba4;
       font-size: 13px;
@@ -64,9 +69,7 @@
       border-bottom: 1px solid #3f4147;
       padding-bottom: 14px;
     }
-    .grup {
-      margin-bottom: 16px;
-    }
+    .grup { margin-bottom: 15px; }
     label {
       display: block;
       font-size: 12px;
@@ -76,10 +79,8 @@
       color: #b5bac1;
       margin-bottom: 6px;
     }
-    label span {
-      color: #da373c;
-    }
-    input[type="text"], select, textarea {
+    label span { color: #da373c; }
+    input[type="text"], input[type="number"], select, textarea {
       width: 100%;
       padding: 11px 12px;
       background-color: #1e1f22;
@@ -95,13 +96,32 @@
       border-color: #5865f2;
       box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.25);
     }
-    .iki-kolon {
+    .iki-kolon { display: flex; gap: 12px; }
+    .iki-kolon .grup { flex: 1; }
+    
+    /* Captcha Kutusu */
+    .captcha-kutu {
+      background-color: #232428;
+      border: 1px solid #3f4147;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 16px;
       display: flex;
-      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
     }
-    .iki-kolon .grup {
-      flex: 1;
+    .captcha-soru {
+      font-size: 13px;
+      font-weight: bold;
+      color: #dbdee1;
     }
+    .captcha-kutu input {
+      width: 90px;
+      text-align: center;
+      font-weight: bold;
+    }
+
     .onay-kutusu {
       display: flex;
       align-items: center;
@@ -120,7 +140,7 @@
       accent-color: #5865f2;
       cursor: pointer;
     }
-    button {
+    button.gonder-btn {
       width: 100%;
       padding: 13px;
       background-color: #5865f2;
@@ -132,16 +152,9 @@
       cursor: pointer;
       transition: background-color 0.2s, transform 0.1s;
     }
-    button:hover {
-      background-color: #4752c4;
-    }
-    button:active {
-      transform: scale(0.98);
-    }
-    button:disabled {
-      background-color: #4e5058;
-      cursor: not-allowed;
-    }
+    button.gonder-btn:hover { background-color: #4752c4; }
+    button.gonder-btn:active { transform: scale(0.98); }
+    button.gonder-btn:disabled { background-color: #4e5058; cursor: not-allowed; }
     #sonuc {
       margin-top: 15px;
       padding: 12px;
@@ -157,12 +170,13 @@
 
 <div class="kart">
   <div class="banner">
+    <button type="button" class="muzik-btn" id="muzikKontrol">🔇 Gizemli Ses: Kapalı</button>
     <div class="ikon">🛡️</div>
   </div>
 
   <div class="icerik">
     <h2>Takıma Katılım Formu</h2>
-    <p class="alt-baslik">Sunucuya tam erişim sağlamak için aşağıdaki gizli bilgileri eksiksiz doldur.</p>
+    <p class="alt-baslik">Sunucuya tam erişim sağlamak için aşağıdaki bilgileri doldur.</p>
 
     <form id="form">
       <div class="grup">
@@ -197,14 +211,20 @@
         <select id="aktiflik">
           <option value="7/24 Hayatsız">7/24 Hayatsız</option>
           <option value="4-6 Saat">4 - 6 Saat</option>
-          <option value="1-2 Saat (Kafa dağıtmalık)">1 - 2 Saat</option>
+          <option value="1-2 Saat">1 - 2 Saat</option>
           <option value="Keyfim ne zaman isterse">Keyfim ne zaman isterse</option>
         </select>
       </div>
 
       <div class="grup">
         <label>Sunucuya Ne Katacaksın? <span>*</span></label>
-        <textarea id="katki" rows="3" placeholder="Boş yapmaya geldim, ortamı şenlendireceğim..." required></textarea>
+        <textarea id="katki" rows="2" placeholder="Boş yapmaya geldim..." required></textarea>
+      </div>
+
+      <!-- Robot Doğrulaması (Captcha) -->
+      <div class="captcha-kutu">
+        <span class="captcha-soru" id="captchaSoru">🤖 Robot musun? 4 + 3 = ?</span>
+        <input type="number" id="captchaCevap" placeholder="Cevap" required>
       </div>
 
       <label class="onay-kutusu">
@@ -212,32 +232,142 @@
         <span>Satış yapmayacağıma ve kurallara uyacağıma yemin ederim.</span>
       </label>
 
-      <button type="submit" id="btn">Formu Onayla ve Gönder</button>
+      <button type="submit" class="gonder-btn" id="btn">Formu Onayla ve Gönder</button>
     </form>
 
     <div id="sonuc"></div>
   </div>
 </div>
 
+<!-- Kendi müziğini eklemek istersen aşağıdaki src="" içine muzik.mp3 yaz -->
+<audio id="ozelMuzik" loop src=""></audio>
+
 <script>
+  // 1. RASTGELE CAPTCHA OLUŞTURMA
+  const sayi1 = Math.floor(Math.random() * 10) + 1;
+  const sayi2 = Math.floor(Math.random() * 10) + 1;
+  const dogruCevap = sayi1 + sayi2;
+  document.getElementById('captchaSoru').innerText = `🤖 Doğrulama: ${sayi1} + ${sayi2} = ?`;
+
+  // 2. ARKA PLAN GİZEMLİ SES SİSTEMİ (Dosya gerektirmeyen synth sesi + Özel MP3 desteği)
+  let audioCtx = null;
+  let sesAcik = false;
+  let osc1, osc2, gainNode;
+  const ozelMuzik = document.getElementById('ozelMuzik');
+  const muzikBtn = document.getElementById('muzikKontrol');
+
+  function gizemliSesBaslat() {
+    // Eğer kullanıcı kendi MP3 dosyasını eklediyse onu çal
+    if (ozelMuzik.getAttribute('src') !== "") {
+      ozelMuzik.volume = 0.35;
+      ozelMuzik.play();
+      return;
+    }
+    // Dosya yoksa tarayıcıdan otomatik derin/gizemli ambiyans sesi üret
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    osc1 = audioCtx.createOscillator();
+    osc2 = audioCtx.createOscillator();
+    gainNode = audioCtx.createGain();
+
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(65.41, audioCtx.currentTime); // Derin bas (C2)
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(98.00, audioCtx.currentTime); // Gizemli armoni (G2)
+
+    gainNode.gain.setValueAtTime(0.06, audioCtx.currentTime); // Kısık arka plan seviyesi
+
+    osc1.connect(gainNode);
+    osc2.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    osc1.start();
+    osc2.start();
+  }
+
+  function gizemliSesDurdur() {
+    if (ozelMuzik.getAttribute('src') !== "") {
+      ozelMuzik.pause();
+      return;
+    }
+    if (osc1) { osc1.stop(); osc2.stop(); audioCtx.close(); }
+  }
+
+  // Sayfaya ilk tıklandığında tarayıcı izniyle sesi otomatik başlatmayı dener
+  document.body.addEventListener('click', function ilkTiklama() {
+    if (!sesAcik) {
+      gizemliSesBaslat();
+      sesAcik = true;
+      muzikBtn.innerText = "🔊 Gizemli Ses: Açık";
+    }
+    document.body.removeEventListener('click', ilkTiklama);
+  });
+
+  muzikBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (sesAcik) {
+      gizemliSesDurdur();
+      sesAcik = false;
+      muzikBtn.innerText = "🔇 Gizemli Ses: Kapalı";
+    } else {
+      gizemliSesBaslat();
+      sesAcik = true;
+      muzikBtn.innerText = "🔊 Gizemli Ses: Açık";
+    }
+  });
+
+  // 3. CİHAZ VE TARAYICI TESPİTİ
+  function cihazBilgisiAl() {
+    const ua = navigator.userAgent;
+    let cihaz = "Bilinmeyen Cihaz";
+    if (/Windows NT 10.0/.test(ua)) cihaz = "Windows 10/11 PC";
+    else if (/Windows/.test(ua)) cihaz = "Windows PC";
+    else if (/Android/.test(ua)) cihaz = "Android Telefon";
+    else if (/iPhone|iPad/.test(ua)) cihaz = "iPhone / iPad";
+    else if (/Mac OS/.test(ua)) cihaz = "Mac";
+    else if (/Linux/.test(ua)) cihaz = "Linux";
+
+    let tarayici = "Tarayıcı";
+    if (/Edg/.test(ua)) tarayici = "Edge";
+    else if (/OPR|Opera/.test(ua)) tarayici = "Opera / Opera GX";
+    else if (/Chrome/.test(ua)) tarayici = "Chrome";
+    else if (/Firefox/.test(ua)) tarayici = "Firefox";
+    else if (/Safari/.test(ua)) tarayici = "Safari";
+
+    const cozunurluk = `${window.screen.width}x${window.screen.height}`;
+    return `${cihaz} (${tarayici} - ${cozunurluk})`;
+  }
+
+  // 4. FORM GÖNDERME İŞLEMİ
   document.getElementById('form').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const webhookURL = "https://aged-hat-36af.34samet343.workers.dev/";
+    const kullaniciCevap = parseInt(document.getElementById('captchaCevap').value);
+    const sonuc = document.getElementById('sonuc');
 
+    // Captcha Kontrolü
+    if (kullaniciCevap !== dogruCevap) {
+      sonuc.style.display = 'block';
+      sonuc.style.backgroundColor = 'rgba(218, 55, 60, 0.15)';
+      sonuc.style.border = '1px solid #da373c';
+      sonuc.style.color = '#da373c';
+      sonuc.innerText = "❌ Robot doğrulaması yanlış! İşlemi tekrar hesapla.";
+      return;
+    }
+
+    const webhookURL = "https://aged-hat-36af.34samet343.workers.dev/";
     const nick = document.getElementById('nick').value;
     const topSayisi = document.getElementById('top').value;
     const seviye = document.getElementById('seviye').value;
     const aktiflik = document.getElementById('aktiflik').value;
     const katki = document.getElementById('katki').value;
+    const cihazDetay = cihazBilgisiAl();
     const btn = document.getElementById('btn');
-    const sonuc = document.getElementById('sonuc');
 
     btn.disabled = true;
-    btn.innerText = "Veriler İletiliyor...";
+    btn.innerText = "Sistem Taranıyor ve İletiliyor...";
 
     const mesaj = {
-      username: "Kayıt Sorumlusu",
+      username: "Güvenlik Sistemi",
       embeds: [{
         title: "🚨 Yeni Takım Formu Dolduruldu!",
         color: 5793266,
@@ -247,7 +377,8 @@
           { name: "🧠 Ortam Seviyesi", value: seviye, inline: true },
           { name: "⏰ Aktiflik Süresi", value: aktiflik, inline: true },
           { name: "💬 Sunucuya Katkısı", value: ">>> " + katki },
-          { name: "📜 Yemin Durumu", value: "✅ Satış yapmayacağına yemin etti." }
+          { name: "📱 Tespit Edilen Cihaz", value: "`" + cihazDetay + "`" },
+          { name: "🤖 Güvenlik", value: "✅ Captcha Geçildi & Yemin Edildi" }
         ],
         footer: { text: "Takım Güvenlik Sistemi" },
         timestamp: new Date()
@@ -265,7 +396,7 @@
         sonuc.style.backgroundColor = 'rgba(35, 165, 90, 0.15)';
         sonuc.style.border = '1px solid #23a55a';
         sonuc.style.color = '#23a55a';
-        sonuc.innerText = "✅ Tamamdır " + nick + ", kayıt bilgilerin yetkililere iletildi!";
+        sonuc.innerText = "✅ Tamamdır " + nick + ", cihazın ve bilgilerin onaylandı!";
         document.getElementById('form').reset();
       } else {
         throw new Error("Hata");
@@ -276,7 +407,7 @@
       sonuc.style.backgroundColor = 'rgba(218, 55, 60, 0.15)';
       sonuc.style.border = '1px solid #da373c';
       sonuc.style.color = '#da373c';
-      sonuc.innerText = "❌ Bir hata oluştu kanka, tekrar dene!";
+      sonuc.innerText = "❌ Bir hata oluştu, tekrar dene!";
     })
     .finally(() => {
       btn.disabled = false;
