@@ -24,6 +24,7 @@
       overflow: hidden;
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.55);
       border: 1px solid #3f4147;
+      transition: all 0.3s ease;
     }
     .banner {
       height: 85px;
@@ -41,8 +42,6 @@
       border-radius: 20px;
       font-size: 12px;
       cursor: pointer;
-      width: auto;
-      margin: 0;
     }
     .muzik-btn:hover { background: rgba(0, 0, 0, 0.7); }
     .ikon {
@@ -99,7 +98,6 @@
     .iki-kolon { display: flex; gap: 12px; }
     .iki-kolon .grup { flex: 1; }
     
-    /* Captcha Kutusu */
     .captcha-kutu {
       background-color: #232428;
       border: 1px solid #3f4147;
@@ -155,26 +153,82 @@
     button.gonder-btn:hover { background-color: #4752c4; }
     button.gonder-btn:active { transform: scale(0.98); }
     button.gonder-btn:disabled { background-color: #4e5058; cursor: not-allowed; }
-    #sonuc {
+    #hataMesaji {
       margin-top: 15px;
       padding: 12px;
       border-radius: 6px;
       text-align: center;
       font-size: 13px;
       font-weight: 600;
+      background-color: rgba(218, 55, 60, 0.15);
+      border: 1px solid #da373c;
+      color: #da373c;
       display: none;
     }
+
+    /* ÖZEL VIP KART STİLLERİ */
+    #vipEkran {
+      display: none;
+      animation: kartAcilis 0.5s ease forwards;
+    }
+    @keyframes kartAcilis {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .vip-rozet {
+      display: inline-block;
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+      color: #1e1f22;
+      font-weight: 800;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .vip-bilgi-kutu {
+      background-color: #1e1f22;
+      border: 1px solid #3f4147;
+      border-left: 4px solid #23a55a;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    .vip-satir {
+      display: flex;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px solid #2b2d31;
+      font-size: 13px;
+    }
+    .vip-satir:last-child { border-bottom: none; }
+    .vip-etiket { color: #949ba4; }
+    .vip-deger { color: #ffffff; font-weight: 700; font-family: monospace; font-size: 14px; }
+    .kod-kopyala-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #23a55a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .kod-kopyala-btn:hover { background-color: #1e8e4b; }
   </style>
 </head>
 <body>
 
 <div class="kart">
-  <div class="banner">
+  <div class="banner" id="bannerAlani">
     <button type="button" class="muzik-btn" id="muzikKontrol">🔇 Gizemli Ses: Kapalı</button>
-    <div class="ikon">🛡️</div>
+    <div class="ikon" id="ustIkon">🛡️</div>
   </div>
 
-  <div class="icerik">
+  <!-- 1. FORM EKRANI -->
+  <div class="icerik" id="formEkran">
     <h2>Takıma Katılım Formu</h2>
     <p class="alt-baslik">Sunucuya tam erişim sağlamak için aşağıdaki bilgileri doldur.</p>
 
@@ -187,7 +241,7 @@
       <div class="iki-kolon">
         <div class="grup">
           <label>Kaç Topun Var? <span>*</span></label>
-          <select id="top">
+          <select id="top" class="sesli-eleman">
             <option value="4 Top (Maşallah)">4</option>
             <option value="2 Top (Standart)">2</option>
             <option value="0 Top (Sıfır)">0</option>
@@ -197,7 +251,7 @@
 
         <div class="grup">
           <label>Ortam Seviyen <span>*</span></label>
-          <select id="seviye">
+          <select id="seviye" class="sesli-eleman">
             <option value="Zehir gibi">Zehir gibi</option>
             <option value="Makara / Troll">Makara / Troll</option>
             <option value="Ağır abi">Ağır abi</option>
@@ -208,7 +262,7 @@
 
       <div class="grup">
         <label>Günde Kaç Saat Aktifsin? <span>*</span></label>
-        <select id="aktiflik">
+        <select id="aktiflik" class="sesli-eleman">
           <option value="7/24 Hayatsız">7/24 Hayatsız</option>
           <option value="4-6 Saat">4 - 6 Saat</option>
           <option value="1-2 Saat">1 - 2 Saat</option>
@@ -221,64 +275,143 @@
         <textarea id="katki" rows="2" placeholder="Boş yapmaya geldim..." required></textarea>
       </div>
 
-      <!-- Robot Doğrulaması (Captcha) -->
       <div class="captcha-kutu">
-        <span class="captcha-soru" id="captchaSoru">🤖 Robot musun? 4 + 3 = ?</span>
+        <span class="captcha-soru" id="captchaSoru">🤖 Doğrulama: 4 + 3 = ?</span>
         <input type="number" id="captchaCevap" placeholder="Cevap" required>
       </div>
 
       <label class="onay-kutusu">
-        <input type="checkbox" id="yemin" required>
+        <input type="checkbox" id="yemin" class="sesli-eleman" required>
         <span>Satış yapmayacağıma ve kurallara uyacağıma yemin ederim.</span>
       </label>
 
       <button type="submit" class="gonder-btn" id="btn">Formu Onayla ve Gönder</button>
     </form>
 
-    <div id="sonuc"></div>
+    <div id="hataMesaji"></div>
+  </div>
+
+  <!-- 2. VIP KART / BAŞVURU KODU EKRANI -->
+  <div class="icerik" id="vipEkran">
+    <span class="vip-rozet">★ ONAYLI VIP GİRİŞ KARTI</span>
+    <h2>Kayıt Başarıyla Tamamlandı!</h2>
+    <p class="alt-baslik">Sistem seni tanıdı. Aşağıdaki özel başvuru kodunu yetkililere ilet veya ekran görüntüsü al.</p>
+
+    <div class="vip-bilgi-kutu">
+      <div class="vip-satir">
+        <span class="vip-etiket">BAŞVURU KODU</span>
+        <span class="vip-deger" id="vipKod" style="color: #fbbf24;">#TR-0000</span>
+      </div>
+      <div class="vip-satir">
+        <span class="vip-etiket">ÜYE NİCKİ</span>
+        <span class="vip-deger" id="vipNick">-</span>
+      </div>
+      <div class="vip-satir">
+        <span class="vip-etiket">TESPİT EDİLEN CİHAZ</span>
+        <span class="vip-deger" id="vipCihaz" style="font-size: 12px;">-</span>
+      </div>
+      <div class="vip-satir">
+        <span class="vip-etiket">GÜVENLİK DURUMU</span>
+        <span class="vip-deger" style="color: #23a55a;">DOĞRULANDI ✓</span>
+      </div>
+    </div>
+
+    <button type="button" class="kod-kopyala-btn" id="kopyalaBtn">📋 Başvuru Kodunu Kopyala</button>
   </div>
 </div>
 
-<!-- Kendi müziğini eklemek istersen aşağıdaki src="" içine muzik.mp3 yaz -->
+<!-- Kendi müziğini eklemek istersen src="" içine muzik.mp3 yaz -->
 <audio id="ozelMuzik" loop src=""></audio>
 
 <script>
-  // 1. RASTGELE CAPTCHA OLUŞTURMA
+  // 1. DİJİTAL BUTON VE ONAY SES EFEKTLERİ (Harici dosya gerektirmez)
+  const efektCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+  function tikSesiCal() {
+    if (efektCtx.state === 'suspended') efektCtx.resume();
+    const osc = efektCtx.createOscillator();
+    const gain = efektCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(650, efektCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(220, efektCtx.currentTime + 0.05);
+    gain.gain.setValueAtTime(0.12, efektCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, efektCtx.currentTime + 0.05);
+    osc.connect(gain);
+    gain.connect(efektCtx.destination);
+    osc.start();
+    osc.stop(efektCtx.currentTime + 0.05);
+  }
+
+  function onaySesiCal() {
+    if (efektCtx.state === 'suspended') efektCtx.resume();
+    const notalar = [523.25, 659.25, 783.99, 1046.50]; // C5 - E5 - G5 - C6 dijital başarı melodisi
+    notalar.forEach((frekans, index) => {
+      const osc = efektCtx.createOscillator();
+      const gain = efektCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(frekans, efektCtx.currentTime + index * 0.08);
+      gain.gain.setValueAtTime(0.14, efektCtx.currentTime + index * 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, efektCtx.currentTime + index * 0.08 + 0.25);
+      osc.connect(gain);
+      gain.connect(efektCtx.destination);
+      osc.start(efektCtx.currentTime + index * 0.08);
+      osc.stop(efektCtx.currentTime + index * 0.08 + 0.25);
+    });
+  }
+
+  function hataSesiCal() {
+    if (efektCtx.state === 'suspended') efektCtx.resume();
+    const osc = efektCtx.createOscillator();
+    const gain = efektCtx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(160, efektCtx.currentTime);
+    osc.frequency.linearRampToValueAtTime(110, efektCtx.currentTime + 0.2);
+    gain.gain.setValueAtTime(0.12, efektCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, efektCtx.currentTime + 0.2);
+    osc.connect(gain);
+    gain.connect(efektCtx.destination);
+    osc.start();
+    osc.stop(efektCtx.currentTime + 0.2);
+  }
+
+  // Seçim kutularına ve onay kutusuna mekanik tık sesi bağla
+  document.querySelectorAll('.sesli-eleman').forEach(el => {
+    el.addEventListener('change', tikSesiCal);
+  });
+
+  // 2. RASTGELE CAPTCHA OLUŞTURMA
   const sayi1 = Math.floor(Math.random() * 10) + 1;
   const sayi2 = Math.floor(Math.random() * 10) + 1;
   const dogruCevap = sayi1 + sayi2;
   document.getElementById('captchaSoru').innerText = `🤖 Doğrulama: ${sayi1} + ${sayi2} = ?`;
 
-  // 2. ARKA PLAN GİZEMLİ SES SİSTEMİ (Dosya gerektirmeyen synth sesi + Özel MP3 desteği)
-  let audioCtx = null;
+  // 3. ARKA PLAN GİZEMLİ SES SİSTEMİ
+  let bgAudioCtx = null;
   let sesAcik = false;
   let osc1, osc2, gainNode;
   const ozelMuzik = document.getElementById('ozelMuzik');
   const muzikBtn = document.getElementById('muzikKontrol');
 
   function gizemliSesBaslat() {
-    // Eğer kullanıcı kendi MP3 dosyasını eklediyse onu çal
     if (ozelMuzik.getAttribute('src') !== "") {
       ozelMuzik.volume = 0.35;
       ozelMuzik.play();
       return;
     }
-    // Dosya yoksa tarayıcıdan otomatik derin/gizemli ambiyans sesi üret
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    osc1 = audioCtx.createOscillator();
-    osc2 = audioCtx.createOscillator();
-    gainNode = audioCtx.createGain();
+    bgAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    osc1 = bgAudioCtx.createOscillator();
+    osc2 = bgAudioCtx.createOscillator();
+    gainNode = bgAudioCtx.createGain();
 
     osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(65.41, audioCtx.currentTime); // Derin bas (C2)
+    osc1.frequency.setValueAtTime(65.41, bgAudioCtx.currentTime);
     osc2.type = 'triangle';
-    osc2.frequency.setValueAtTime(98.00, audioCtx.currentTime); // Gizemli armoni (G2)
-
-    gainNode.gain.setValueAtTime(0.06, audioCtx.currentTime); // Kısık arka plan seviyesi
+    osc2.frequency.setValueAtTime(98.00, bgAudioCtx.currentTime);
+    gainNode.gain.setValueAtTime(0.06, bgAudioCtx.currentTime);
 
     osc1.connect(gainNode);
     osc2.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
+    gainNode.connect(bgAudioCtx.destination);
 
     osc1.start();
     osc2.start();
@@ -289,10 +422,9 @@
       ozelMuzik.pause();
       return;
     }
-    if (osc1) { osc1.stop(); osc2.stop(); audioCtx.close(); }
+    if (osc1) { osc1.stop(); osc2.stop(); bgAudioCtx.close(); }
   }
 
-  // Sayfaya ilk tıklandığında tarayıcı izniyle sesi otomatik başlatmayı dener
   document.body.addEventListener('click', function ilkTiklama() {
     if (!sesAcik) {
       gizemliSesBaslat();
@@ -304,6 +436,7 @@
 
   muzikBtn.addEventListener('click', function(e) {
     e.stopPropagation();
+    tikSesiCal();
     if (sesAcik) {
       gizemliSesDurdur();
       sesAcik = false;
@@ -315,7 +448,7 @@
     }
   });
 
-  // 3. CİHAZ VE TARAYICI TESPİTİ
+  // 4. CİHAZ VE TARAYICI TESPİTİ
   function cihazBilgisiAl() {
     const ua = navigator.userAgent;
     let cihaz = "Bilinmeyen Cihaz";
@@ -337,22 +470,22 @@
     return `${cihaz} (${tarayici} - ${cozunurluk})`;
   }
 
-  // 4. FORM GÖNDERME İŞLEMİ
+  // 5. FORM GÖNDERME VE VIP KART OLUŞTURMA
   document.getElementById('form').addEventListener('submit', function(e) {
     e.preventDefault();
 
     const kullaniciCevap = parseInt(document.getElementById('captchaCevap').value);
-    const sonuc = document.getElementById('sonuc');
+    const hataMesaji = document.getElementById('hataMesaji');
 
-    // Captcha Kontrolü
     if (kullaniciCevap !== dogruCevap) {
-      sonuc.style.display = 'block';
-      sonuc.style.backgroundColor = 'rgba(218, 55, 60, 0.15)';
-      sonuc.style.border = '1px solid #da373c';
-      sonuc.style.color = '#da373c';
-      sonuc.innerText = "❌ Robot doğrulaması yanlış! İşlemi tekrar hesapla.";
+      hataSesiCal();
+      hataMesaji.style.display = 'block';
+      hataMesaji.innerText = "❌ Robot doğrulaması yanlış! İşlemi tekrar hesapla.";
       return;
     }
+
+    tikSesiCal();
+    hataMesaji.style.display = 'none';
 
     const webhookURL = "https://aged-hat-36af.34samet343.workers.dev/";
     const nick = document.getElementById('nick').value;
@@ -361,26 +494,27 @@
     const aktiflik = document.getElementById('aktiflik').value;
     const katki = document.getElementById('katki').value;
     const cihazDetay = cihazBilgisiAl();
+    const basvuruKodu = "#TR-" + Math.floor(1000 + Math.random() * 9000);
     const btn = document.getElementById('btn');
 
     btn.disabled = true;
-    btn.innerText = "Sistem Taranıyor ve İletiliyor...";
+    btn.innerText = "VIP Kart Oluşturuluyor...";
 
     const mesaj = {
       username: "Güvenlik Sistemi",
       embeds: [{
-        title: "🚨 Yeni Takım Formu Dolduruldu!",
-        color: 5793266,
+        title: "👑 Yeni VIP Kayıt Tamamlandı!",
+        color: 2336090,
         fields: [
+          { name: "🎫 Başvuru Kodu", value: "**" + basvuruKodu + "**", inline: true },
           { name: "👤 Discord Nicki", value: "`" + nick + "`", inline: true },
           { name: "⚽ Top Sayısı", value: topSayisi, inline: true },
           { name: "🧠 Ortam Seviyesi", value: seviye, inline: true },
           { name: "⏰ Aktiflik Süresi", value: aktiflik, inline: true },
           { name: "💬 Sunucuya Katkısı", value: ">>> " + katki },
-          { name: "📱 Tespit Edilen Cihaz", value: "`" + cihazDetay + "`" },
-          { name: "🤖 Güvenlik", value: "✅ Captcha Geçildi & Yemin Edildi" }
+          { name: "📱 Tespit Edilen Cihaz", value: "`" + cihazDetay + "`" }
         ],
-        footer: { text: "Takım Güvenlik Sistemi" },
+        footer: { text: "VIP Güvenlik Sistemi" },
         timestamp: new Date()
       }]
     };
@@ -392,24 +526,35 @@
     })
     .then(response => {
       if (response.ok) {
-        sonuc.style.display = 'block';
-        sonuc.style.backgroundColor = 'rgba(35, 165, 90, 0.15)';
-        sonuc.style.border = '1px solid #23a55a';
-        sonuc.style.color = '#23a55a';
-        sonuc.innerText = "✅ Tamamdır " + nick + ", cihazın ve bilgilerin onaylandı!";
-        document.getElementById('form').reset();
+        onaySesiCal();
+
+        // Form ekranını gizle ve VIP Kart ekranını aç
+        document.getElementById('formEkran').style.display = 'none';
+        document.getElementById('vipEkran').style.display = 'block';
+
+        // Banner ve ikonu VIP altın/yeşil temasına çevir
+        document.getElementById('bannerAlani').style.background = "linear-gradient(135deg, #23a55a 0%, #f59e0b 100%)";
+        document.getElementById('ustIkon').innerText = "👑";
+
+        // VIP kart bilgilerini doldur
+        document.getElementById('vipKod').innerText = basvuruKodu;
+        document.getElementById('vipNick').innerText = nick;
+        document.getElementById('vipCihaz').innerText = cihazDetay;
+
+        // Kopyala butonunu aktif et
+        document.getElementById('kopyalaBtn').onclick = function() {
+          tikSesiCal();
+          navigator.clipboard.writeText(`Başvuru Kodum: ${basvuruKodu} | Nick: ${nick}`);
+          this.innerText = "✅ Kod Panoya Kopyalandı!";
+        };
       } else {
         throw new Error("Hata");
       }
     })
     .catch(() => {
-      sonuc.style.display = 'block';
-      sonuc.style.backgroundColor = 'rgba(218, 55, 60, 0.15)';
-      sonuc.style.border = '1px solid #da373c';
-      sonuc.style.color = '#da373c';
-      sonuc.innerText = "❌ Bir hata oluştu, tekrar dene!";
-    })
-    .finally(() => {
+      hataSesiCal();
+      hataMesaji.style.display = 'block';
+      hataMesaji.innerText = "❌ Bağlantı hatası oluştu, tekrar dene!";
       btn.disabled = false;
       btn.innerText = "Formu Onayla ve Gönder";
     });
