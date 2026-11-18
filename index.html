@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Special+Elite&display=swap" rel="stylesheet">
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
-:root{--bg:#070506;--blood:#9b1218;--blood-bright:#d3202a;--bone:#d9cfc0;--dim:#7d746a;--panel:rgba(14,9,10,.82)}
+:root{--bg:#070506;--blood:#9b1218;--blood-bright:#d3202a;--bone:#d9cfc0;--dim:#7d746a;--panel:rgba(14,9,10,.82);--discord:#5865f2}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{min-height:100%}
 body{background:var(--bg);color:var(--bone);font-family:'Special Elite','Courier New',monospace;overflow-x:hidden}
@@ -27,10 +27,13 @@ h1{font-family:'IM Fell English SC',serif;font-weight:400;font-size:clamp(34px,9
 .drip i{left:50%;height:42px;width:5px}
 .drip::after{left:86%;height:22px;animation-delay:1.6s}
 @keyframes ooze{0%{transform:scaleY(.15);transform-origin:top}60%,100%{transform:scaleY(1);transform-origin:top}}
-form,.card{background:var(--panel);border:1px solid #2a1a1c;border-left:3px solid var(--blood);padding:26px 22px;box-shadow:0 0 40px rgba(0,0,0,.8),inset 0 0 30px rgba(120,10,16,.08)}
+form,.card,.login{background:var(--panel);border:1px solid #2a1a1c;border-left:3px solid var(--blood);padding:26px 22px;box-shadow:0 0 40px rgba(0,0,0,.8),inset 0 0 30px rgba(120,10,16,.08)}
+.login{text-align:center}
+.login p{color:var(--dim);font-size:14px;line-height:1.5;margin-top:14px}
 label{display:block;margin:20px 0 8px;font-size:15px;color:var(--bone)}
 label:first-of-type{margin-top:0}
 input[type=text],select,textarea{width:100%;background:#0b0708;border:1px solid #3a2326;color:var(--bone);font:inherit;padding:12px;border-radius:2px;outline:none}
+input[readonly]{color:var(--dim);border-style:dashed}
 textarea{min-height:90px;resize:vertical}
 input:focus,select:focus,textarea:focus{border-color:var(--blood-bright);box-shadow:0 0 0 2px rgba(211,32,42,.28)}
 .check{display:flex;gap:10px;align-items:flex-start;margin-top:22px;color:var(--dim);font-size:14px;line-height:1.4}
@@ -42,10 +45,16 @@ button:hover{background:var(--blood-bright)}
 button:active{transform:scale(.985)}
 button:focus-visible{outline:2px solid var(--bone);outline-offset:3px}
 button:disabled{opacity:.55;cursor:wait}
+#dlogin{background:var(--discord);margin-top:0}
+#dlogin:hover{background:#4752c4}
 .music{position:fixed;top:12px;right:12px;z-index:5;width:auto;margin:0;padding:8px 12px;font-size:13px;background:#1a0f10;border:1px solid #3a2326;color:var(--bone)}
 .music:hover{background:#2a1517}
 .err{margin-top:14px;color:var(--blood-bright);font-size:14px;min-height:18px}
-.card{display:none;text-align:center}
+.who{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px dashed #3a2326;font-size:14px;color:var(--dim)}
+.who img{width:36px;height:36px;border-radius:50%}
+.who b{color:var(--bone);font-weight:400}
+.hide{display:none}
+.card{text-align:center}
 .card h2{font-family:'IM Fell English SC',serif;font-weight:400;font-size:30px;color:var(--bone);margin-bottom:8px}
 .card p{color:var(--dim);font-size:15px}
 .code{margin:22px 0;font-size:32px;color:var(--blood-bright);text-shadow:0 0 14px rgba(211,32,42,.6);letter-spacing:.06em}
@@ -64,13 +73,21 @@ dt{color:var(--dim)}dd{color:var(--bone);text-align:right;word-break:break-word}
 <main>
 <header>
  <h1>Karanlığa<br>Hoş Geldin</h1>
- <p class="sub">Takıma katılmak için formu doldur. Yetkililer bakacak.</p>
+ <p class="sub">Takıma katılmak için önce Discord hesabını doğrula.</p>
  <div class="drip"><i></i></div>
 </header>
 
-<form id="form" autocomplete="off">
+<section class="login" id="login">
+ <button type="button" id="dlogin">Discord ile giriş yap</button>
+ <p>Sadece kullanıcı adın ve ID'n okunur. Mesajlarına, arkadaşlarına ya da sunucularına erişilmez. Bu bilgiler yetkililere iletilir.</p>
+ <p class="err" id="lerr" role="alert"></p>
+</section>
+
+<form id="form" class="hide" autocomplete="off">
+ <div class="who"><img id="avatar" alt=""><span>Giriş yapıldı: <b id="who"></b></span></div>
+
  <label for="nick">Discord nickin</label>
- <input type="text" id="nick" maxlength="40" required>
+ <input type="text" id="nick" readonly>
 
  <label for="balls">Kaç topun var?</label>
  <select id="balls"><option>4</option><option>2</option><option>0</option><option>Saymadım</option></select>
@@ -88,12 +105,12 @@ dt{color:var(--dim)}dd{color:var(--bone);text-align:right;word-break:break-word}
 
  <div class="captcha"><div class="cf-turnstile" data-sitekey="0x4AAAAAAGGqxk-gjzIQP1SW" data-theme="dark" data-language="tr"></div></div>
 
- <p class="note">Gönderince nickin, cevapların ve cihaz türün (mobil/masaüstü, tarayıcı) yetkililere Discord'dan iletilir. IP adresi kaydedilmez.</p>
+ <p class="note">Gönderince Discord kullanıcı adın, ID'n, cevapların ve cihaz türün (mobil/masaüstü, tarayıcı) yetkililere iletilir. IP adresi kaydedilmez.</p>
  <button type="submit" id="send">Formu gönder</button>
  <p class="err" id="err" role="alert"></p>
 </form>
 
-<section class="card" id="card">
+<section class="card hide" id="card">
  <h2>Kayıt tamamlandı</h2>
  <p>Aşağıdaki başvuru kodunu yetkililere ilet.</p>
  <div class="code" id="code">#TR-0000</div>
@@ -110,17 +127,53 @@ dt{color:var(--dim)}dd{color:var(--bone);text-align:right;word-break:break-word}
 
 <script>
 var WEBHOOK_URL = "https://discord.com/api/webhooks/1571916041963962421/xkXEfV_e4jHEt84uTNpZWeCVW-6MabNYOyAhjiNpmt4FLMg_NDHRiRYc8D3Yg0NAAbZ0";
+var CLIENT_ID = "1572541363516342292";
+var REDIRECT = "https://34samet343-creator.github.io/Forum/";
+var $ = function(id){ return document.getElementById(id); };
+var user = null;
 
-var dark = document.getElementById('dark');
+// El feneri
+var dark = $('dark');
 function move(x, y){ dark.style.setProperty('--x', x + 'px'); dark.style.setProperty('--y', y + 'px'); }
 addEventListener('mousemove', function(e){ move(e.clientX, e.clientY); });
 addEventListener('touchmove', function(e){ var t = e.touches[0]; move(t.clientX, t.clientY); }, {passive:true});
 
-var audio = document.getElementById('audio'), mbtn = document.getElementById('music');
+// Müzik
+var audio = $('audio'), mbtn = $('music');
 mbtn.addEventListener('click', function(){
  if (audio.paused) { audio.play().then(function(){ mbtn.textContent = '🔊 Müzik açık'; }).catch(function(){}); }
  else { audio.pause(); mbtn.textContent = '🔇 Müzik kapalı'; }
 });
+
+// Discord girişi
+$('dlogin').addEventListener('click', function(){
+ var arr = new Uint8Array(12); crypto.getRandomValues(arr);
+ var state = Array.from(arr, function(b){ return b.toString(16).padStart(2, '0'); }).join('');
+ try { sessionStorage.setItem('oauth_state', state); } catch(x){ $('lerr').textContent = 'Tarayıcın girişe izin vermiyor.'; return; }
+ location.href = 'https://discord.com/oauth2/authorize?response_type=token&client_id=' + CLIENT_ID +
+  '&scope=identify&redirect_uri=' + encodeURIComponent(REDIRECT) + '&state=' + state;
+});
+
+(function handleReturn(){
+ var h = new URLSearchParams(location.hash.slice(1));
+ var token = h.get('access_token');
+ if (!token) { if (h.get('error')) $('lerr').textContent = 'Giriş iptal edildi.'; return; }
+ history.replaceState(null, '', location.pathname + location.search);
+ var saved = null; try { saved = sessionStorage.getItem('oauth_state'); sessionStorage.removeItem('oauth_state'); } catch(x){}
+ if (!saved || saved !== h.get('state')) { $('lerr').textContent = 'Giriş doğrulanamadı, tekrar dene.'; return; }
+ fetch('https://discord.com/api/users/@me', { headers: { Authorization: 'Bearer ' + token } })
+ .then(function(r){ if (!r.ok) throw 0; return r.json(); })
+ .then(function(u){
+  user = u;
+  var shown = u.global_name || u.username;
+  $('nick').value = u.username;
+  $('who').textContent = shown + ' (@' + u.username + ')';
+  if (u.avatar) $('avatar').src = 'https://cdn.discordapp.com/avatars/' + u.id + '/' + u.avatar + '.png?size=64'; else $('avatar').style.display = 'none';
+  $('login').classList.add('hide');
+  $('form').classList.remove('hide');
+ })
+ .catch(function(){ $('lerr').textContent = 'Discord bilgisi alınamadı, tekrar dene.'; });
+})();
 
 function device(){
  var ua = navigator.userAgent, mobile = /Android|iPhone|iPad|Mobile/i.test(ua);
@@ -129,16 +182,16 @@ function device(){
  return (mobile ? 'Mobil' : 'Masaüstü') + ' · ' + br + (os ? ' · ' + os : '');
 }
 
-var form = document.getElementById('form'), err = document.getElementById('err'), sendBtn = document.getElementById('send');
-var lastCode = '';
+var form = $('form'), err = $('err'), sendBtn = $('send'), lastCode = '';
 form.addEventListener('submit', function(e){
  e.preventDefault();
  err.textContent = '';
+ if (!user) { err.textContent = 'Önce Discord ile giriş yapmalısın.'; return; }
+ if ($('nick').value.trim().toLowerCase() !== user.username.toLowerCase()) { err.textContent = 'Nick, Discord hesabınla uyuşmuyor.'; $('nick').value = user.username; return; }
  var tokenEl = form.querySelector('[name="cf-turnstile-response"]');
  if (!tokenEl || !tokenEl.value) { err.textContent = 'Önce "ben robot değilim" kutusunu geç.'; return; }
  if (Date.now() - (+localStorage.getItem('lastSend') || 0) < 30000) { err.textContent = 'Biraz bekle, 30 saniye sonra tekrar dene.'; return; }
 
- var nick = document.getElementById('nick').value.trim();
  var dev = device();
  lastCode = '#TR-' + Math.floor(1000 + Math.random() * 9000);
  sendBtn.disabled = true; sendBtn.textContent = 'Gönderiliyor...';
@@ -147,11 +200,11 @@ form.addEventListener('submit', function(e){
   title: 'Yeni başvuru ' + lastCode,
   color: 10162712,
   fields: [
-   { name: 'Discord nicki', value: nick },
-   { name: 'Top sayısı', value: document.getElementById('balls').value, inline: true },
-   { name: 'Ortam', value: document.getElementById('level').value, inline: true },
-   { name: 'Aktiflik', value: document.getElementById('hours').value, inline: true },
-   { name: 'Ne katacak', value: document.getElementById('why').value.trim() || '-' },
+   { name: 'Discord hesabı', value: '<@' + user.id + '> (@' + user.username + ')\nID: ' + user.id },
+   { name: 'Top sayısı', value: $('balls').value, inline: true },
+   { name: 'Ortam', value: $('level').value, inline: true },
+   { name: 'Aktiflik', value: $('hours').value, inline: true },
+   { name: 'Ne katacak', value: $('why').value.trim() || '-' },
    { name: 'Cihaz', value: dev }
   ],
   timestamp: new Date().toISOString()
@@ -161,11 +214,11 @@ form.addEventListener('submit', function(e){
  .then(function(r){
   if (!r.ok) throw new Error('http ' + r.status);
   try { localStorage.setItem('lastSend', Date.now()); } catch(x){}
-  document.getElementById('code').textContent = lastCode;
-  document.getElementById('o-nick').textContent = nick;
-  document.getElementById('o-dev').textContent = dev;
-  form.style.display = 'none';
-  document.getElementById('card').style.display = 'block';
+  $('code').textContent = lastCode;
+  $('o-nick').textContent = user.username;
+  $('o-dev').textContent = dev;
+  form.classList.add('hide');
+  $('card').classList.remove('hide');
  })
  .catch(function(){
   err.textContent = 'Gönderilemedi. Biraz sonra tekrar dene.';
@@ -174,7 +227,7 @@ form.addEventListener('submit', function(e){
  });
 });
 
-document.getElementById('copy').addEventListener('click', function(){
+$('copy').addEventListener('click', function(){
  var btn = this;
  (navigator.clipboard ? navigator.clipboard.writeText(lastCode) : Promise.reject()).then(function(){
   btn.textContent = 'Kopyalandı';
